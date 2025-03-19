@@ -1,4 +1,4 @@
 package com.example.scheduler.controller;
 
-public class ScheduleController {
+public class ScheduleExceptionHandler {
 }

@@ -1,4 +1,4 @@
 package com.example.scheduler.service;
 
-public class ScheduleServiceImpl {
+public class ScheduleServiceImpl implements ScheduleService {
 }
