@@ -79,6 +79,11 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
         return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id));
     }
 
+    @Override
+    public int deleteSchedule(Long id) {
+        return jdbcTemplate.update("DELETE FROM schedule WHERE schedule_id = ?", id);
+    }
+
 
     private RowMapper<ScheduleResponseDto> scheduleRowMapper() {
         return (rs, rowNum) -> new ScheduleResponseDto(
