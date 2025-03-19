@@ -2,10 +2,12 @@ package com.example.scheduler.repository;
 
 import com.example.scheduler.dto.ScheduleResponseDto;
 import com.example.scheduler.entity.Schedule;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.sql.DataSource;
 import java.sql.Timestamp;
@@ -60,6 +62,23 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
         return result.stream().findAny();
     }
 
+    @Override
+    public int updateSchedule(Long id, String title, String content, Timestamp updated_time) {
+        return jdbcTemplate.update(
+                "UPDATE schedule SET title = ?, content = ?, updated_date = ? WHERE schedule_id = ?",
+                title, content, updated_time, id  //
+        );
+    }
+
+
+
+    @Override
+    public ScheduleResponseDto findScheduleByIdOrElseTheow(Long id) {
+        List<ScheduleResponseDto> result = jdbcTemplate.query("SELECT * FROM schedule WHERE schedule_id = ?", scheduleRowMapper(), id);
+
+        return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id));
+    }
+
 
     private RowMapper<ScheduleResponseDto> scheduleRowMapper() {
         return (rs, rowNum) -> new ScheduleResponseDto(
@@ -71,5 +90,3 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
         );
     }
 }
-
-
