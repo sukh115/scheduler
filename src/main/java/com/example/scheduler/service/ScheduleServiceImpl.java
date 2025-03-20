@@ -39,29 +39,36 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public ScheduleResponseDto updateSchedule(Long id, String title, String content, Timestamp updated_time) {
-        int updatedRow = scheduleRepository.updateSchedule(id, title, content, updated_time);
+    public ScheduleResponseDto updateSchedule(Long id, String title, String content, String user_name , Timestamp updated_time,String password) {
+        Schedule schedule = scheduleRepository.findScheduleEntityById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (!schedule.getPassword().equals(password)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
+        }
 
         if (title == null || content == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "제목과 내용을 적어주세요.");
         }
 
-        if (updated_time == null) {
-            updated_time = new Timestamp(System.currentTimeMillis());
-        }
+        String updatedUserName = schedule.getUserName();
+        Timestamp updatedTime = new Timestamp(System.currentTimeMillis());
 
-
+        int updatedRow = scheduleRepository.updatedSchedule(id, title, content, updatedTime, updatedUserName);
         if (updatedRow == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No data has been modified.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "일정 수정 실패");
         }
 
-        ScheduleResponseDto dto = scheduleRepository.findScheduleByIdOrElseTheow(id);
-
-        return dto;
+        return scheduleRepository.findScheduleByIdOrElseTheow(id);
     }
 
     @Override
-    public void deleteSchdule(Long id) {
+    public void deleteSchedule(Long id, String password) {
+        Schedule schedule = scheduleRepository.findScheduleEntityById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (!schedule.getPassword().equals(password)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
+        }
+
         int deleteRow = scheduleRepository.deleteSchedule(id);
 
         if (deleteRow == 0) {

@@ -2,7 +2,6 @@ package com.example.scheduler.controller;
 
 import com.example.scheduler.dto.ScheduleRequestDto;
 import com.example.scheduler.dto.ScheduleResponseDto;
-import com.example.scheduler.entity.Schedule;
 import com.example.scheduler.service.ScheduleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,16 +38,23 @@ public class ScheduleController {
     @PutMapping("/{id}")
     public ResponseEntity<ScheduleResponseDto> updateSchedule(
             @PathVariable Long id,
-            @RequestBody ScheduleResponseDto dto
+            @RequestBody ScheduleRequestDto dto
     ) {
-        Timestamp updatedTime = (dto.getUpdatedDate() != null) ? dto.getUpdatedDate() : new Timestamp(System.currentTimeMillis());
+        Timestamp updatedTime = new Timestamp(System.currentTimeMillis());
 
-        return new ResponseEntity<>(scheduleService.updateSchedule(id, dto.getTitle(), dto.getContent(), updatedTime), HttpStatus.OK);
+        return new ResponseEntity<>(
+                scheduleService.updateSchedule(id, dto.getTitle(), dto.getContent(),dto.getUserName(), updatedTime, dto.getPassword()),
+                HttpStatus.OK
+        );
     }
 
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id) {
-        scheduleService.deleteSchdule(id);
+    public ResponseEntity<Void> deleteSchedule(
+            @PathVariable Long id,
+            @RequestBody ScheduleRequestDto dto
+    ) {
+        scheduleService.deleteSchedule(id, dto.getPassword());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

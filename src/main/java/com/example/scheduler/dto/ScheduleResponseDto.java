@@ -22,5 +22,4 @@ public class ScheduleResponseDto {
         this.updatedDate = updateDate;
         this.userName = userName;
     }
-
 }

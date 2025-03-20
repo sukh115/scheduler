@@ -63,13 +63,19 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
     }
 
     @Override
-    public int updateSchedule(Long id, String title, String content, Timestamp updated_time) {
+    public Optional<Schedule> findScheduleEntityById(Long id) {
+        List<Schedule> result = jdbcTemplate.query("SELECT * FROM schedule WHERE schedule_id = ?", scheduleRowMapperV2(), id);
+
+        return result.stream().findAny();
+    }
+
+    @Override
+    public int updatedSchedule(Long id, String title, String content, Timestamp updated_time, String user_name) {
         return jdbcTemplate.update(
                 "UPDATE schedule SET title = ?, content = ?, updated_date = ? WHERE schedule_id = ?",
                 title, content, updated_time, id  //
         );
     }
-
 
 
     @Override
@@ -92,6 +98,18 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
                 rs.getString("content"),
                 rs.getTimestamp("updated_date"),
                 rs.getString("user_name")
+        );
+    }
+
+    private RowMapper<Schedule> scheduleRowMapperV2() {
+        return (rs, rowNum) -> new Schedule(
+                rs.getLong("schedule_id"),
+                rs.getString("title"),
+                rs.getString("content"),
+                rs.getTimestamp("create_date"),
+                rs.getTimestamp("updated_date"),
+                rs.getString("user_name"),
+                rs.getString("password")
         );
     }
 }
