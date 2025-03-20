@@ -19,7 +19,7 @@ public interface ScheduleRepository {
 
     int updatedSchedule(Long scheduleId, String title, String content, Timestamp updated_time, Long authorId);
 
-    ScheduleAuthorDto findScheduleByIdOrElseThrow(Long authorId);
+    ScheduleAuthorDto findScheduleByIdOrElseThrow(Long scheduleId);
 
     int deleteSchedule(Long scheduleId);
 

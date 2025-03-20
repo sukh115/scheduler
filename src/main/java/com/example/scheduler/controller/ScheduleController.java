@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +35,20 @@ public class ScheduleController {
     public ResponseEntity<Optional<ScheduleAuthorDto>> findByAuthorId(@PathVariable Long authorId) {
         return new ResponseEntity<>(scheduleService.findByAuthorId(authorId), HttpStatus.OK);
     }
+
+
+    @PutMapping("/{scheduleId}")
+    public ResponseEntity<ScheduleAuthorDto> updateSchedule(
+            @PathVariable Long scheduleId,
+            @RequestBody ScheduleRequestDto dto
+    ) {
+        return new ResponseEntity<>(
+                scheduleService.updateSchedule(scheduleId, dto.getTitle(), dto.getContent(), dto.getAuthorId(), dto.getPassword()),
+                HttpStatus.OK
+        );
+    }
+
+
 
     @DeleteMapping("/{scheduleId}")
     public ResponseEntity<Void> deleteSchedule(

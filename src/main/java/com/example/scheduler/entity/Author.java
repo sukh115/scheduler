@@ -20,4 +20,13 @@ public class Author {
         this.createdDate = new Timestamp(System.currentTimeMillis());
         this.updatedDate = new Timestamp(System.currentTimeMillis());
     }
+
+    public Author(Author author) {
+        this.authorId = author.authorId;
+        this.name = author.name;
+        this.email = author.email;
+        this.createdDate = author.createdDate;
+        this.updatedDate = author.updatedDate;
+    }
+
 }

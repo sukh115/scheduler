@@ -55,7 +55,7 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
     public List<ScheduleAuthorDto> findAllSchedule() {
         return jdbcTemplate.query("SELECT s.title, s.content, s.updated_date, a.name " +
                 "FROM schedule s " +
-                "JOIN author a ON s.author_id = a.author_id " +
+                "JOIN author a ON s.author_id = a.author_id " + // 반드시 JOIN 필요
                 "ORDER BY s.updated_date DESC", scheduleAuthorRowMapper());
     }
 
@@ -88,10 +88,13 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
 
 
     @Override
-    public ScheduleAuthorDto findScheduleByIdOrElseThrow(Long authorId) {
-        List<ScheduleAuthorDto> result = jdbcTemplate.query("SELECT * FROM schedule WHERE schedule_id = ?", scheduleAuthorRowMapper(), authorId);
+    public ScheduleAuthorDto findScheduleByIdOrElseThrow(Long scheduleId) {
+        List<ScheduleAuthorDto> result = jdbcTemplate.query("SELECT s.title, s.content, s.updated_date, a.name" +
+                "FROM schedule s " +
+                "JOIN author a ON s.author_id = a.author_id " +
+                "WHERE s.schedule_id = ?", scheduleAuthorRowMapper(), scheduleId);
 
-        return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + authorId));
+        return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + scheduleId));
     }
 
     @Override
