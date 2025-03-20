@@ -1,5 +1,6 @@
 package com.example.scheduler.repository;
 
+import com.example.scheduler.dto.ScheduleAuthorDto;
 import com.example.scheduler.dto.ScheduleResponseDto;
 import com.example.scheduler.entity.Schedule;
 
@@ -11,16 +12,15 @@ public interface ScheduleRepository {
 
     ScheduleResponseDto saveSchedule(Schedule schedule);
 
-    List<ScheduleResponseDto> findAllSchedule();
+    List<ScheduleAuthorDto> findAllSchedule();
 
-    Optional<ScheduleResponseDto> findScheduleById(Long id);
-    Optional<Schedule> findScheduleEntityById(Long id);
+    Optional<Schedule> findScheduleEntityById(Long scheduleId);
+    Optional<ScheduleAuthorDto> findByAuthorId(Long authorId);
 
+    int updatedSchedule(Long scheduleId, String title, String content, Timestamp updated_time, Long authorId);
 
-    int updatedSchedule(Long id, String title, String content, Timestamp updated_time, String user_name);
+    ScheduleAuthorDto findScheduleByIdOrElseThrow(Long authorId);
 
-    ScheduleResponseDto findScheduleByIdOrElseThrow(Long id);
-
-    int deleteSchedule(Long id);
+    int deleteSchedule(Long scheduleId);
 
 }

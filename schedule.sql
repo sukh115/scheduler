@@ -5,6 +5,7 @@
     `content`      VARCHAR(2000) NOT NULL,
     `create_date`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `user_name`    VARCHAR(100)  NOT NULL,
-    `password`     VARCHAR(255)  NOT NULL
+    author_id      BIGINT        NOT NULL,
+    `password`     VARCHAR(255)  NOT NULL,
+    FOREIGN KEY (author_id) REFERENCES schedule.author (author_id) ON DELETE CASCADE
 );

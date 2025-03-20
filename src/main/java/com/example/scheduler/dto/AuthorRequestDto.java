@@ -5,15 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Timestamp;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ScheduleRequestDto {
-    private String title;
-    private String content;
-    private Long authorId;
-    private String password;
+public class AuthorRequestDto {
+    private String name;
+    private String email;
 }

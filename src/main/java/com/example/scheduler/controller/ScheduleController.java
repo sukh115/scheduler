@@ -1,5 +1,6 @@
 package com.example.scheduler.controller;
 
+import com.example.scheduler.dto.ScheduleAuthorDto;
 import com.example.scheduler.dto.ScheduleRequestDto;
 import com.example.scheduler.dto.ScheduleResponseDto;
 import com.example.scheduler.service.ScheduleService;
@@ -26,35 +27,21 @@ public class ScheduleController {
     }
 
     @GetMapping
-    public List<ScheduleResponseDto> findAllSchedule(){
+    public List<ScheduleAuthorDto> findAllSchedule(){
         return scheduleService.findAllSchedule();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Optional<ScheduleResponseDto>> findScheduleById(@PathVariable Long id){
-        return new ResponseEntity<>(scheduleService.findScheduleById(id), HttpStatus.OK);
+    @GetMapping("/author/{authorId}")
+    public ResponseEntity<Optional<ScheduleAuthorDto>> findByAuthorId(@PathVariable Long authorId) {
+        return new ResponseEntity<>(scheduleService.findByAuthorId(authorId), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ScheduleResponseDto> updateSchedule(
-            @PathVariable Long id,
-            @RequestBody ScheduleRequestDto dto
-    ) {
-        Timestamp updatedTime = new Timestamp(System.currentTimeMillis());
-
-        return new ResponseEntity<>(
-                scheduleService.updateSchedule(id, dto.getTitle(), dto.getContent(),dto.getUserName(), updatedTime, dto.getPassword()),
-                HttpStatus.OK
-        );
-    }
-
-
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{scheduleId}")
     public ResponseEntity<Void> deleteSchedule(
-            @PathVariable Long id,
+            @PathVariable Long scheduleId,
             @RequestBody ScheduleRequestDto dto
     ) {
-        scheduleService.deleteSchedule(id, dto.getPassword());
+        scheduleService.deleteSchedule(scheduleId, dto.getPassword());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

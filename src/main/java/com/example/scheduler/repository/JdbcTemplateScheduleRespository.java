@@ -1,5 +1,6 @@
 package com.example.scheduler.repository;
 
+import com.example.scheduler.dto.ScheduleAuthorDto;
 import com.example.scheduler.dto.ScheduleResponseDto;
 import com.example.scheduler.entity.Schedule;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,7 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("title", schedule.getTitle());
         parameters.put("content", schedule.getContent());
-        parameters.put("user_name", schedule.getUserName());
+        parameters.put("author_id", schedule.getAuthorId());
         parameters.put("password", schedule.getPassword());
         parameters.put("create_date", schedule.getCreateDate());  // 추가
         parameters.put("updated_date", schedule.getUpdatedDate()); // 추가
@@ -46,66 +47,71 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
                 schedule.getTitle(),
                 schedule.getContent(),
                 schedule.getUpdatedDate().toString(),
-                schedule.getUserName()
+                schedule.getAuthorId()
         );
     }
 
     @Override
-    public List<ScheduleResponseDto> findAllSchedule() {
-        return jdbcTemplate.query("SELECT * FROM schedule ORDER BY updated_date DESC", scheduleRowMapper());
+    public List<ScheduleAuthorDto> findAllSchedule() {
+        return jdbcTemplate.query("SELECT s.title, s.content, s.updated_date, a.name " +
+                "FROM schedule s " +
+                "JOIN author a ON s.author_id = a.author_id " +
+                "ORDER BY s.updated_date DESC", scheduleAuthorRowMapper());
     }
 
+
     @Override
-    public Optional<ScheduleResponseDto> findScheduleById(Long id) {
-        List<ScheduleResponseDto> result = jdbcTemplate.query("SELECT * FROM schedule WHERE schedule_id = ?", scheduleRowMapper(), id);
+    public Optional<Schedule> findScheduleEntityById(Long scheduleId) {
+        List<Schedule> result = jdbcTemplate.query("SELECT * FROM schedule WHERE schedule_id = ?", scheduleRowMapperV2(), scheduleId);
 
         return result.stream().findAny();
     }
 
     @Override
-    public Optional<Schedule> findScheduleEntityById(Long id) {
-        List<Schedule> result = jdbcTemplate.query("SELECT * FROM schedule WHERE schedule_id = ?", scheduleRowMapperV2(), id);
-
+    public Optional<ScheduleAuthorDto> findByAuthorId(Long authorId) {
+        List<ScheduleAuthorDto> result = jdbcTemplate.query("SELECT s.title, s.content, s.updated_date, a.name " +
+                "FROM schedule s " +
+                "JOIN author a ON s.author_id = a.author_id " +
+                "WHERE s.author_id = ? " +
+                "ORDER BY s.updated_date DESC", scheduleAuthorRowMapper(), authorId);
         return result.stream().findAny();
     }
 
+
     @Override
-    public int updatedSchedule(Long id, String title, String content, Timestamp updated_time, String user_name) {
+    public int updatedSchedule(Long scheduleId, String title, String content, Timestamp updated_time, Long authorId) {
         return jdbcTemplate.update(
                 "UPDATE schedule SET title = ?, content = ?, updated_date = ? WHERE schedule_id = ?",
-                title, content, updated_time, id  //
+                title, content, updated_time, scheduleId  //
         );
     }
 
 
     @Override
-    public ScheduleResponseDto findScheduleByIdOrElseThrow(Long id) {
-        List<ScheduleResponseDto> result = jdbcTemplate.query("SELECT * FROM schedule WHERE schedule_id = ?", scheduleRowMapper(), id);
+    public ScheduleAuthorDto findScheduleByIdOrElseThrow(Long authorId) {
+        List<ScheduleAuthorDto> result = jdbcTemplate.query("SELECT * FROM schedule WHERE schedule_id = ?", scheduleAuthorRowMapper(), authorId);
 
-        return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id));
+        return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + authorId));
     }
 
     @Override
-    public int deleteSchedule(Long id) {
-        return jdbcTemplate.update("DELETE FROM schedule WHERE schedule_id = ?", id);
+    public int deleteSchedule(Long scheduleId) {
+        return jdbcTemplate.update("DELETE FROM schedule WHERE schedule_id = ?", scheduleId);
     }
 
 
-    private RowMapper<ScheduleResponseDto> scheduleRowMapper() {
+    private RowMapper<ScheduleAuthorDto> scheduleAuthorRowMapper() {
         return (rs, rowNum) -> {
             Timestamp timestamp = rs.getTimestamp("updated_date");
-            String formattedDate = timestamp.toLocalDateTime().toLocalDate().toString(); // ✅ YYYY-MM-DD 변환
-
-            return new ScheduleResponseDto(
-                    rs.getLong("schedule_id"),
+            String formattedDate = timestamp.toLocalDateTime().toLocalDate().toString();
+            return new ScheduleAuthorDto(
                     rs.getString("title"),
                     rs.getString("content"),
-                    formattedDate, // ✅ 변환된 값 적용
-                    rs.getString("user_name")
+                    rs.getTimestamp("updated_date").toString(), // 날짜 변환
+                    rs.getString("name") // 작성자 이름
             );
         };
     }
-
 
     private RowMapper<Schedule> scheduleRowMapperV2() {
         return (rs, rowNum) -> new Schedule(
@@ -114,7 +120,7 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
                 rs.getString("content"),
                 rs.getTimestamp("create_date"),
                 rs.getTimestamp("updated_date"),
-                rs.getString("user_name"),
+                rs.getLong("author_id"),
                 rs.getString("password")
         );
     }

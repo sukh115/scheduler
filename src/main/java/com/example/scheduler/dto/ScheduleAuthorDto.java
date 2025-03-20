@@ -3,17 +3,13 @@ package com.example.scheduler.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.sql.Timestamp;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ScheduleRequestDto {
+public class ScheduleAuthorDto {
     private String title;
     private String content;
-    private Long authorId;
-    private String password;
+    private String updatedDate;
+    private String Name;
 }
