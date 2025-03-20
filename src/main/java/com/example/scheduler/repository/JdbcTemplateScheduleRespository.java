@@ -45,7 +45,7 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
                 generatedId,
                 schedule.getTitle(),
                 schedule.getContent(),
-                new Timestamp(System.currentTimeMillis()),
+                schedule.getUpdatedDate().toString(),
                 schedule.getUserName()
         );
     }
@@ -79,7 +79,7 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
 
 
     @Override
-    public ScheduleResponseDto findScheduleByIdOrElseTheow(Long id) {
+    public ScheduleResponseDto findScheduleByIdOrElseThrow(Long id) {
         List<ScheduleResponseDto> result = jdbcTemplate.query("SELECT * FROM schedule WHERE schedule_id = ?", scheduleRowMapper(), id);
 
         return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + id));
@@ -92,14 +92,20 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
 
 
     private RowMapper<ScheduleResponseDto> scheduleRowMapper() {
-        return (rs, rowNum) -> new ScheduleResponseDto(
-                rs.getLong("schedule_id"),
-                rs.getString("title"),
-                rs.getString("content"),
-                rs.getTimestamp("updated_date"),
-                rs.getString("user_name")
-        );
+        return (rs, rowNum) -> {
+            Timestamp timestamp = rs.getTimestamp("updated_date");
+            String formattedDate = timestamp.toLocalDateTime().toLocalDate().toString(); // ✅ YYYY-MM-DD 변환
+
+            return new ScheduleResponseDto(
+                    rs.getLong("schedule_id"),
+                    rs.getString("title"),
+                    rs.getString("content"),
+                    formattedDate, // ✅ 변환된 값 적용
+                    rs.getString("user_name")
+            );
+        };
     }
+
 
     private RowMapper<Schedule> scheduleRowMapperV2() {
         return (rs, rowNum) -> new Schedule(

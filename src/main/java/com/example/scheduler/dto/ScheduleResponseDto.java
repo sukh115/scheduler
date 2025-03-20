@@ -12,10 +12,10 @@ public class ScheduleResponseDto {
     private Long id;
     private String title;
     private String content;
-    private Timestamp updatedDate;
+    private String updatedDate;
     private String userName;
 
-    public ScheduleResponseDto(Long id, String title, String content, Timestamp updateDate, String userName) {
+    public ScheduleResponseDto(Long id, String title, String content, String updateDate, String userName) {
         this.id = id;
         this.title = title;
         this.content = content;

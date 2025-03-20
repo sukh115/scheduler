@@ -58,7 +58,7 @@ public class ScheduleServiceImpl implements ScheduleService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "일정 수정 실패");
         }
 
-        return scheduleRepository.findScheduleByIdOrElseTheow(id);
+        return scheduleRepository.findScheduleByIdOrElseThrow(id);
     }
 
     @Override
