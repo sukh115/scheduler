@@ -7,7 +7,6 @@ import com.example.scheduler.entity.Schedule;
 import com.example.scheduler.repository.AuthorRepository;
 import com.example.scheduler.repository.ScheduleRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
