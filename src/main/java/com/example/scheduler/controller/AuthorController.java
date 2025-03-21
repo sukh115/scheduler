@@ -4,6 +4,7 @@ import com.example.scheduler.dto.AuthorRequestDto;
 import com.example.scheduler.dto.AuthorResponseDto;
 import com.example.scheduler.entity.Author;
 import com.example.scheduler.service.AuthorService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class AuthorController {
     }
 
     @PostMapping
-    public ResponseEntity<AuthorResponseDto> createAuthor(@RequestBody AuthorRequestDto dto) {
+    public ResponseEntity<AuthorResponseDto> createAuthor(@RequestBody @Valid AuthorRequestDto dto) {
         return new ResponseEntity<>(authorService.saveAuthor(dto), HttpStatus.CREATED);
     }
 
@@ -30,7 +31,7 @@ public class AuthorController {
     @PutMapping("/{authorId}")
     public ResponseEntity<Author> updateAuthor(
             @PathVariable Long authorId,
-            @RequestBody AuthorRequestDto dto
+            @RequestBody @Valid AuthorRequestDto dto
     ) {
         return new ResponseEntity<>(
                 authorService.updateAuthor(authorId, dto.getName(), dto.getEmail()),
