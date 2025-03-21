@@ -65,6 +65,20 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
         return result.stream().findAny();
     }
 
+    @Override
+    public List<ScheduleAuthorDto> findAllPaged(int offset, int limit) {
+        return jdbcTemplate.query(
+                "SELECT s.title, s.content, s.updated_date, a.name " +
+                        "FROM schedule s " +
+                        "JOIN author a ON s.author_id = a.author_id " +
+                        "ORDER BY s.updated_date DESC " +
+                        "LIMIT ? OFFSET ?",
+                scheduleAuthorRowMapper(), limit, offset
+        );
+    }
+
+
+
 
     @Override
     public int updatedSchedule(Long scheduleId, String title, String content, Timestamp updated_time, Long authorId) {

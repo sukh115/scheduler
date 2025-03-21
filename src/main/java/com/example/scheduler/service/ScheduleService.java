@@ -18,4 +18,7 @@ public interface ScheduleService {
     ScheduleAuthorDto updateSchedule(Long scheduleId, String title, String content, Long authorId, String password);
 
     void deleteSchedule(Long scheduleId, String password);
+
+    List<ScheduleAuthorDto> findAllSchedulePaged(int page, int size);
+
 }

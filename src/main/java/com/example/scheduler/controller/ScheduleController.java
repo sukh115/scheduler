@@ -58,4 +58,13 @@ public class ScheduleController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @GetMapping("/paged")
+    public List<ScheduleAuthorDto> findAllSchedulePaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return scheduleService.findAllSchedulePaged(page, size);
+    }
+
+
 }

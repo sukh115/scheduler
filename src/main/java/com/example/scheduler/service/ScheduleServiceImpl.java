@@ -96,4 +96,11 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
     }
 
+    @Override
+    public List<ScheduleAuthorDto> findAllSchedulePaged(int page, int size) {
+        int offset = page * size;
+        return scheduleRepository.findAllPaged(offset, size);
+    }
+
+
 }

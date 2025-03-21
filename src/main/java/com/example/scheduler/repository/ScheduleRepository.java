@@ -18,6 +18,8 @@ public interface ScheduleRepository {
 
     Optional<ScheduleAuthorDto> findByAuthorId(Long authorId);
 
+    List<ScheduleAuthorDto> findAllPaged(int offset, int limit);
+
     int updatedSchedule(Long scheduleId, String title, String content, Timestamp updated_time, Long authorId);
 
     ScheduleAuthorDto findScheduleByIdOrElseThrow(Long scheduleId);
