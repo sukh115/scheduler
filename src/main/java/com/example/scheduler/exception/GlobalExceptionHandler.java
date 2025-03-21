@@ -58,7 +58,6 @@ public class GlobalExceptionHandler {
             errors.put(error.getField(), message != null ? message : "알 수 없는 오류");
         }
 
-
         return ResponseEntity.badRequest().body(
                 new ValidationExceptionResponse(400, errors, getNow())
         );

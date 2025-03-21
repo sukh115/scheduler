@@ -8,7 +8,9 @@ import java.util.Map;
 @Getter
 @AllArgsConstructor
 public class ValidationExceptionResponse {
+
     private int status;
     private Map<String, String> messages;
     private String timestamp;
+
 }
