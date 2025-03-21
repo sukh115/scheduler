@@ -15,6 +15,7 @@ public interface AuthorRepository {
     Author findAuthorByIdOrElseThrow(Long authorId);
 
     Optional<Author> findEntityByAuthorId(Long authorId);
+
     Optional<Author> findByAuthorId(Long authorId);
 
     int updateAuthor(Long authorId, String name, String email, Timestamp updatedTime);

@@ -11,7 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.sql.Timestamp;
 
 @Service
-public class AuthorServiceImpl implements AuthorService{
+public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
 

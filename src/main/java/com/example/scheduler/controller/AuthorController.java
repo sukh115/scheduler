@@ -3,7 +3,6 @@ package com.example.scheduler.controller;
 import com.example.scheduler.dto.AuthorRequestDto;
 import com.example.scheduler.dto.AuthorResponseDto;
 import com.example.scheduler.entity.Author;
-import com.example.scheduler.repository.AuthorRepository;
 import com.example.scheduler.service.AuthorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +12,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/authors")
 public class AuthorController {
     private final AuthorService authorService;
-    private final AuthorRepository authorRepository;
 
-    public AuthorController(AuthorService authorService, AuthorRepository authorRepository) {
+    public AuthorController(AuthorService authorService) {
         this.authorService = authorService;
-        this.authorRepository = authorRepository;
     }
 
     @PostMapping

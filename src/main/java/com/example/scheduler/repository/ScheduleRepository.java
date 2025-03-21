@@ -15,6 +15,7 @@ public interface ScheduleRepository {
     List<ScheduleAuthorDto> findAllSchedule();
 
     Optional<Schedule> findScheduleEntityById(Long scheduleId);
+
     Optional<ScheduleAuthorDto> findByAuthorId(Long authorId);
 
     int updatedSchedule(Long scheduleId, String title, String content, Timestamp updated_time, Long authorId);

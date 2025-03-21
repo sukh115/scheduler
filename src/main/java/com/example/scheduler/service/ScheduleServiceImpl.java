@@ -37,7 +37,6 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
 
-
     @Override
     public List<ScheduleAuthorDto> findAllSchedule() {
         return scheduleRepository.findAllSchedule();
@@ -50,35 +49,35 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleAuthorDto updateSchedule(Long scheduleId, String title, String content, Long authorId, String password) {
-        // 1️⃣ 현재 시간 설정
+        //  현재 시간 설정
         Timestamp updatedTime = new Timestamp(System.currentTimeMillis());
 
-        // 2️⃣ 일정이 존재하는지 확인
+        // 일정이 존재하는지 확인
         Schedule schedule = scheduleRepository.findScheduleEntityById(scheduleId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 일정입니다."));
 
-        // 3️⃣ 작성자가 일치하는지 확인
+        // 작성자가 일치하는지 확인
         if (!schedule.getAuthorId().equals(authorId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "작성자만 일정을 수정할 수 있습니다.");
         }
 
-        // 4️⃣ 비밀번호 검증
+        // 비밀번호 검증
         if (!schedule.getPassword().equals(password)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
         }
 
-        // 5️⃣ 제목과 내용이 비어 있으면 예외 발생
+        // 제목과 내용이 비어 있으면 예외 발생
         if (title == null || title.trim().isEmpty() || content == null || content.trim().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "제목과 내용을 입력해주세요.");
         }
 
-        // 6️⃣ 수정 수행
+        // 수정 수행
         int updatedRow = scheduleRepository.updatedSchedule(scheduleId, title, content, updatedTime, authorId);
         if (updatedRow == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "일정 수정 실패");
         }
 
-        // 7️⃣ 수정된 일정 반환 (작성자 이름 포함)
+        // 수정된 일정 반환 (작성자 이름 포함)
         return scheduleRepository.findScheduleByIdOrElseThrow(scheduleId);
     }
 

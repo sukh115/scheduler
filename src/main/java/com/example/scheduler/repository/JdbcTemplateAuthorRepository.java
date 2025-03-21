@@ -17,14 +17,13 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
-public class JdbcTemplateAuthorRepository implements AuthorRepository{
+public class JdbcTemplateAuthorRepository implements AuthorRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
     public JdbcTemplateAuthorRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
-
 
 
     @Override
