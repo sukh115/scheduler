@@ -1,4 +1,4 @@
-package exception;
+package com.example.scheduler.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,8 +7,8 @@ import java.util.Map;
 
 @Getter
 @AllArgsConstructor
-public class ValidationExceptionResponse {
+public class ExceptionResponse {
     private int status;
-    private Map<String, String> messages;
+    private String message;
     private String timestamp;
 }

@@ -1,4 +1,4 @@
-package exception;
+package com.example.scheduler.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -55,10 +54,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ValidationExceptionResponse> handleValidationException(MethodArgumentNotValidException e) {
         Map<String, String> errors = new HashMap<>();
         for (FieldError error : e.getBindingResult().getFieldErrors()) {
-            errors.put(error.getField(), error.getDefaultMessage());
             String message = error.getDefaultMessage();
             errors.put(error.getField(), message != null ? message : "알 수 없는 오류");
         }
+
 
         return ResponseEntity.badRequest().body(
                 new ValidationExceptionResponse(400, errors, getNow())
