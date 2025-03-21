@@ -78,8 +78,6 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
     }
 
 
-
-
     @Override
     public int updatedSchedule(Long scheduleId, String title, String content, Timestamp updated_time, Long authorId) {
         return jdbcTemplate.update("UPDATE schedule SET title = ?, content = ?, updated_date = ? WHERE schedule_id = ?", title, content, updated_time, scheduleId  //

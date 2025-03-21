@@ -26,12 +26,4 @@ public class Schedule {
         this.updatedDate = new Timestamp(System.currentTimeMillis());
     }
 
-    public Schedule(Long scheduleId, String title, String content, Timestamp updateDate, Long authorId) {
-        this.scheduleId = scheduleId;
-        this.title = title;
-        this.content = content;
-        this.updatedDate = updateDate;
-        this.authorId = authorId;
-    }
-
 }
