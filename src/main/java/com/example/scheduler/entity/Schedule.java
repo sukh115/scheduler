@@ -44,7 +44,7 @@ public class Schedule {
 
     // 비밀번호 일치 유효성 검사
     public void validatePassword(String password) {
-        if (this.password.equals(password)) {
+        if (!this.password.equals(password)) {
             throw new CustomException(ExceptionCode.PASSWORD_MISMATCH);
         }
     }
