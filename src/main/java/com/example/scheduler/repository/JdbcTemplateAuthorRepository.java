@@ -1,6 +1,6 @@
 package com.example.scheduler.repository;
 
-import com.example.scheduler.dto.AuthorResponseDto;
+import com.example.scheduler.dto.response.AuthorResponseDto;
 import com.example.scheduler.entity.Author;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;

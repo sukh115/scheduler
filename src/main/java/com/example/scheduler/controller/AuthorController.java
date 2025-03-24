@@ -1,7 +1,7 @@
 package com.example.scheduler.controller;
 
-import com.example.scheduler.dto.AuthorRequestDto;
-import com.example.scheduler.dto.AuthorResponseDto;
+import com.example.scheduler.dto.request.AuthorRequestDto;
+import com.example.scheduler.dto.response.AuthorResponseDto;
 import com.example.scheduler.entity.Author;
 import com.example.scheduler.service.AuthorService;
 import jakarta.validation.Valid;

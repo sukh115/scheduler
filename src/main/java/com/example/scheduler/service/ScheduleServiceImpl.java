@@ -1,8 +1,8 @@
 package com.example.scheduler.service;
 
-import com.example.scheduler.dto.ScheduleAuthorDto;
-import com.example.scheduler.dto.ScheduleRequestDto;
-import com.example.scheduler.dto.ScheduleResponseDto;
+import com.example.scheduler.dto.response.ScheduleAuthorDto;
+import com.example.scheduler.dto.request.ScheduleRequestDto;
+import com.example.scheduler.dto.response.ScheduleResponseDto;
 import com.example.scheduler.entity.Author;
 import com.example.scheduler.entity.Schedule;
 import com.example.scheduler.exception.CustomException;

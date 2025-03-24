@@ -1,8 +1,8 @@
 package com.example.scheduler.controller;
 
-import com.example.scheduler.dto.ScheduleAuthorDto;
-import com.example.scheduler.dto.ScheduleRequestDto;
-import com.example.scheduler.dto.ScheduleResponseDto;
+import com.example.scheduler.dto.response.ScheduleAuthorDto;
+import com.example.scheduler.dto.request.ScheduleRequestDto;
+import com.example.scheduler.dto.response.ScheduleResponseDto;
 import com.example.scheduler.service.ScheduleService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 
 /**

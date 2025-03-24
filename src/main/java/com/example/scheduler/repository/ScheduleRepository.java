@@ -1,7 +1,7 @@
 package com.example.scheduler.repository;
 
-import com.example.scheduler.dto.ScheduleAuthorDto;
-import com.example.scheduler.dto.ScheduleResponseDto;
+import com.example.scheduler.dto.response.ScheduleAuthorDto;
+import com.example.scheduler.dto.response.ScheduleResponseDto;
 import com.example.scheduler.entity.Schedule;
 
 import java.sql.Timestamp;
