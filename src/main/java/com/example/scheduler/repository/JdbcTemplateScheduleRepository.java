@@ -1,5 +1,6 @@
 package com.example.scheduler.repository;
 
+import com.example.scheduler.constant.column.AuthorColumns;
 import com.example.scheduler.dto.ScheduleAuthorDto;
 import com.example.scheduler.dto.ScheduleResponseDto;
 import com.example.scheduler.entity.Schedule;
@@ -21,6 +22,9 @@ import java.util.Optional;
 import static com.example.scheduler.constant.column.ScheduleColumns.*;
 import static com.example.scheduler.query.ScheduleQuery.*;
 
+/**
+ * 일정 데이터를 JDBC 기반으로 관리하는 Repository 구현체
+ */
 @Repository
 public class JdbcTemplateScheduleRepository implements ScheduleRepository {
 
@@ -32,6 +36,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
 
     /**
      * 일정 저장
+     * - schedule 테이블에 데이터 저장 후, 생성된 ID를 포함하여 DTO 반환
      */
     @Override
     public ScheduleResponseDto saveSchedule(Schedule schedule) {
@@ -59,7 +64,9 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
     }
 
     /**
-     * 전체 일정 조회
+     * 전체 일정 목록 조회 (작성자 이름 포함)
+     * - author와 조인
+     * - 최신 수정일 기준 내림차순 정렬
      */
     @Override
     public List<ScheduleAuthorDto> findAllSchedule() {
@@ -70,7 +77,8 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
     }
 
     /**
-     * 일정 ID로 단건 조회 (Entity)
+     * 일정 ID로 단건 조회 (Entity 반환)
+     * - 조건: schedule_id
      */
     @Override
     public Optional<Schedule> findScheduleEntityById(Long scheduleId) {
@@ -83,7 +91,10 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
     }
 
     /**
-     * 작성자 ID로 최신 일정 조회
+     * 작성자 ID로 최신 일정 1건 조회
+     * - 조건: author_id
+     * - 정렬: updated_date DESC
+     * - 반환: DTO
      */
     @Override
     public Optional<ScheduleAuthorDto> findByAuthorId(Long authorId) {
@@ -96,7 +107,8 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
     }
 
     /**
-     * 전체 일정 페이징 조회
+     * 페이징된 전체 일정 조회 (작성자 포함)
+     * - LIMIT / OFFSET 사용
      */
     @Override
     public List<ScheduleAuthorDto> findAllPaged(int offset, int limit) {
@@ -109,6 +121,8 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
 
     /**
      * 일정 수정
+     * - title, content, updated_date 변경
+     * - 조건: schedule_id
      */
     @Override
     public int updatedSchedule(Long scheduleId, String title, String content, Timestamp updatedTime, Long authorId) {
@@ -119,7 +133,8 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
     }
 
     /**
-     * 일정 ID로 조회 + 작성자 이름 포함
+     * 일정 ID로 조회 (작성자 포함)
+     * - 없을 경우 NOT_FOUND 예외 발생
      */
     @Override
     public ScheduleAuthorDto findScheduleByIdOrElseThrow(Long scheduleId) {
@@ -135,6 +150,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
 
     /**
      * 일정 삭제
+     * - 조건: schedule_id
      */
     @Override
     public int deleteSchedule(Long scheduleId) {
@@ -146,6 +162,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
 
     /**
      * RowMapper: 일정 + 작성자 이름 DTO 매핑
+     * - 모든 필드 포함 + author테이블 작성자 이름 포함
      */
     private RowMapper<ScheduleAuthorDto> scheduleAuthorRowMapper() {
         return (rs, rowNum) -> {
@@ -154,13 +171,14 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
                     rs.getString(TITLE.getColumnName()),
                     rs.getString(CONTENT.getColumnName()),
                     timestamp.toString(),
-                    rs.getString("author_name") // 별칭으로 가져옴
+                    rs.getString(AuthorColumns.NAME.getColumnName()) // 별칭으로 가져옴
             );
         };
     }
 
     /**
-     * RowMapper: Schedule Entity 매핑
+     * RowMapper: Schedule 엔티티 매핑
+     * - 모든 필드 포함
      */
     private RowMapper<Schedule> scheduleRowMapperV2() {
         return (rs, rowNum) -> new Schedule(

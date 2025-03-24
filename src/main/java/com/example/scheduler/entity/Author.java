@@ -38,6 +38,7 @@ public class Author {
     }
 
 
+    // 작성자 유무 확인
     public void validateExistence() {
         if (this.authorId == null) {
             throw new CustomException(ExceptionCode.AUTHOR_NOT_FOUND);

@@ -19,6 +19,9 @@ import java.util.Optional;
 import static com.example.scheduler.constant.column.AuthorColumns.*;
 import static com.example.scheduler.query.AuthorQuery.*;
 
+/**
+ * 작성자 데이터를 JDBC 기반으로 관리하는 Repository 구현체
+ */
 @Repository
 public class JdbcTemplateAuthorRepository implements AuthorRepository {
 
@@ -54,7 +57,9 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository {
     }
 
     /**
-     * 작성자 ID 존재 여부 확인
+     * 작성자 존재 여부 확인
+     * - 조건: author_id
+     * - 반환: 존재하면 true, 없으면 false
      */
     @Override
     public boolean existsByAuthorId(Long authorId) {
@@ -67,7 +72,9 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository {
     }
 
     /**
-     * 작성자 ID로 조회, 없으면 예외 발생
+     * 작성자 단건 조회 (예외 발생)
+     * - 조건: author_id
+     * - 없을 경우 NOT_FOUND 예외 발생
      */
     @Override
     public Author findAuthorByIdOrElseThrow(Long authorId) {
@@ -82,7 +89,8 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository {
     }
 
     /**
-     * 작성자 ID로 Optional 형태 조회 (Entity)
+     * 작성자 단건 조회 (Optional 반환)
+     * - 조건: author_id
      */
     @Override
     public Optional<Author> findByAuthorId(Long authorId) {
@@ -96,6 +104,8 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository {
 
     /**
      * 작성자 정보 수정
+     * - name, email, updated_date 갱신
+     * - 조건: author_id
      */
     @Override
     public int updateAuthor(Long authorId, String name, String email, Timestamp updatedTime) {
@@ -107,6 +117,7 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository {
 
     /**
      * 작성자 삭제
+     * - 조건: author_id
      */
     @Override
     public int deleteAuthor(Long authorId) {
@@ -117,7 +128,8 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository {
     }
 
     /**
-     * RowMapper: Author Entity 매핑
+     * RowMapper: Author 엔티티 매핑
+     * - 전체 필드 포함
      */
     private final RowMapper<Author> authorRowMapper = (rs, rowNum) ->
             new Author(
@@ -130,6 +142,7 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository {
 
     /**
      * RowMapper: Author DTO 매핑
+     * - 일부 필드만 사용 (응답용)
      */
     private final RowMapper<AuthorResponseDto> authorResponseDtoRowMapper = (rs, rowNum) ->
             new AuthorResponseDto(
