@@ -1,4 +1,4 @@
-package constant.column;
+package com.example.scheduler.constant.column;
 
 import lombok.Getter;
 

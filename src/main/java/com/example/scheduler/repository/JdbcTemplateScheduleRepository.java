@@ -3,7 +3,7 @@ package com.example.scheduler.repository;
 import com.example.scheduler.dto.ScheduleAuthorDto;
 import com.example.scheduler.dto.ScheduleResponseDto;
 import com.example.scheduler.entity.Schedule;
-import constant.column.AuthorColumns;
+import com.example.scheduler.query.ScheduleQuery;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,18 +18,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static constant.column.ScheduleColumns.*;
+import static com.example.scheduler.constant.column.ScheduleColumns.*;
+import static com.example.scheduler.query.ScheduleQuery.*;
 
 @Repository
-public class JdbcTemplateScheduleRespository implements ScheduleRepository {
+public class JdbcTemplateScheduleRepository implements ScheduleRepository {
+
     private final JdbcTemplate jdbcTemplate;
 
-    public JdbcTemplateScheduleRespository(DataSource dataSource) {
+    public JdbcTemplateScheduleRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     /**
-     * 일정 저장 - SimpleJdbcInsert로 schedule 테이블에 저장 후 ID 반환
+     * 일정 저장
      */
     @Override
     public ScheduleResponseDto saveSchedule(Schedule schedule) {
@@ -57,26 +59,23 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
     }
 
     /**
-     * 전체 일정 조회 - 작성자 이름 포함, 최신순 정렬
+     * 전체 일정 조회
      */
     @Override
     public List<ScheduleAuthorDto> findAllSchedule() {
         return jdbcTemplate.query(
-                "SELECT s." + TITLE.getColumnName() + ", s." + CONTENT.getColumnName() + ", s." + UPDATED_DATE.getColumnName() + " = a." + AuthorColumns.NAME.getColumnName() +
-                        "FROM schedule s " +
-                        "JOIN author a ON s." + AUTHOR_ID.getColumnName() + " = a. " + AuthorColumns.AUTHOR_ID.getColumnName() +
-                        "ORDER BY s." + UPDATED_DATE.getColumnName() + " DESC",
+                findAllWithAuthor(),
                 scheduleAuthorRowMapper()
         );
     }
 
     /**
-     * 일정 ID로 단건 조회 (Entity 반환)
+     * 일정 ID로 단건 조회 (Entity)
      */
     @Override
     public Optional<Schedule> findScheduleEntityById(Long scheduleId) {
         List<Schedule> result = jdbcTemplate.query(
-                "SELECT * FROM schedule WHERE " + SCHEDULE_ID.getColumnName() + " = ?",
+                findEntityById(),
                 scheduleRowMapperV2(),
                 scheduleId
         );
@@ -84,16 +83,12 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
     }
 
     /**
-     * 작성자 ID로 최신 일정 1건 조회
+     * 작성자 ID로 최신 일정 조회
      */
     @Override
     public Optional<ScheduleAuthorDto> findByAuthorId(Long authorId) {
         List<ScheduleAuthorDto> result = jdbcTemplate.query(
-                "SELECT s." + TITLE.getColumnName() + ", s." + CONTENT.getColumnName() + ", s." + UPDATED_DATE.getColumnName() + " = a." + AuthorColumns.NAME.getColumnName() +
-                        "FROM schedule s " +
-                        "JOIN author a ON s." + AUTHOR_ID.getColumnName() + " = a. " + AuthorColumns.AUTHOR_ID.getColumnName() +
-                        "WHERE s." + AUTHOR_ID.getColumnName() + " = ? " +
-                        "ORDER BY s." + UPDATED_DATE.getColumnName() + " DESC",
+                ScheduleQuery.findByAuthorId(),
                 scheduleAuthorRowMapper(),
                 authorId
         );
@@ -101,16 +96,12 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
     }
 
     /**
-     * 페이징 처리된 전체 일정 조회 (작성자 포함)
+     * 전체 일정 페이징 조회
      */
     @Override
     public List<ScheduleAuthorDto> findAllPaged(int offset, int limit) {
         return jdbcTemplate.query(
-                "SELECT s." + TITLE.getColumnName() + ", s." + CONTENT.getColumnName() + ", s." + UPDATED_DATE.getColumnName() + " = a." + AuthorColumns.NAME.getColumnName() +
-                        "FROM schedule s " +
-                        "JOIN author a ON s." + AUTHOR_ID.getColumnName() + " = a. " + AuthorColumns.AUTHOR_ID.getColumnName() +
-                        "ORDER BY s." + UPDATED_DATE.getColumnName() + " DESC " +
-                        "LIMIT ? OFFSET ?",
+                ScheduleQuery.findAllPaged(),
                 scheduleAuthorRowMapper(),
                 limit, offset
         );
@@ -120,27 +111,20 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
      * 일정 수정
      */
     @Override
-    public int updatedSchedule(Long scheduleId, String title, String content, Timestamp updated_time, Long authorId) {
+    public int updatedSchedule(Long scheduleId, String title, String content, Timestamp updatedTime, Long authorId) {
         return jdbcTemplate.update(
-                "UPDATE schedule SET " +
-                        TITLE.getColumnName() + " = ?, " +
-                        CONTENT.getColumnName() + " = ?, " +
-                        UPDATED_DATE.getColumnName() + " = ? " +
-                        "WHERE " + SCHEDULE_ID.getColumnName() + " = ?",
-                title, content, updated_time, scheduleId
+                updateById(),
+                title, content, updatedTime, scheduleId
         );
     }
 
     /**
-     * 일정 ID로 조회 + 작성자 이름 포함 (예외 발생 가능)
+     * 일정 ID로 조회 + 작성자 이름 포함
      */
     @Override
     public ScheduleAuthorDto findScheduleByIdOrElseThrow(Long scheduleId) {
         return jdbcTemplate.query(
-                        "SELECT s." + TITLE.getColumnName() + ", s." + CONTENT.getColumnName() + ", s." + UPDATED_DATE.getColumnName() + " = a." + AuthorColumns.NAME.getColumnName() +
-                                "FROM schedule s " +
-                                "JOIN author a ON s." + AUTHOR_ID.getColumnName() + " = a. " + AuthorColumns.AUTHOR_ID.getColumnName() +
-                                "WHERE s." + SCHEDULE_ID.getColumnName() + " = ?",
+                        findByIdWithAuthor(),
                         scheduleAuthorRowMapper(),
                         scheduleId
                 )
@@ -155,7 +139,7 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
     @Override
     public int deleteSchedule(Long scheduleId) {
         return jdbcTemplate.update(
-                "DELETE FROM schedule WHERE " + SCHEDULE_ID.getColumnName() + " = ?",
+                deleteById(),
                 scheduleId
         );
     }
@@ -170,7 +154,7 @@ public class JdbcTemplateScheduleRespository implements ScheduleRepository {
                     rs.getString(TITLE.getColumnName()),
                     rs.getString(CONTENT.getColumnName()),
                     timestamp.toString(),
-                    rs.getString(AuthorColumns.NAME.getColumnName())
+                    rs.getString("author_name") // 별칭으로 가져옴
             );
         };
     }

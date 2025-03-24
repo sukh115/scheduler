@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static constant.column.AuthorColumns.*;
+import static com.example.scheduler.constant.column.AuthorColumns.*;
+import static com.example.scheduler.query.AuthorQuery.*;
 
 @Repository
 public class JdbcTemplateAuthorRepository implements AuthorRepository {
@@ -58,7 +59,7 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository {
     @Override
     public boolean existsByAuthorId(Long authorId) {
         Integer count = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM author WHERE " + AUTHOR_ID.getColumnName() + " = ?",
+                existsById(),
                 Integer.class,
                 authorId
         );
@@ -71,7 +72,7 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository {
     @Override
     public Author findAuthorByIdOrElseThrow(Long authorId) {
         List<Author> result = jdbcTemplate.query(
-                "SELECT * FROM author WHERE " + AUTHOR_ID.getColumnName() + " = ?",
+                findById(),
                 authorRowMapper,
                 authorId
         );
@@ -86,7 +87,7 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository {
     @Override
     public Optional<Author> findByAuthorId(Long authorId) {
         List<Author> result = jdbcTemplate.query(
-                "SELECT * FROM author WHERE " + AUTHOR_ID.getColumnName() + " = ?",
+                findById(),
                 authorRowMapper,
                 authorId
         );
@@ -99,11 +100,7 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository {
     @Override
     public int updateAuthor(Long authorId, String name, String email, Timestamp updatedTime) {
         return jdbcTemplate.update(
-                "UPDATE author SET " +
-                        NAME.getColumnName() + " = ?, " +
-                        EMAIL.getColumnName() + " = ?, " +
-                        UPDATED_DATE.getColumnName() + " = ? " +
-                        "WHERE " + AUTHOR_ID.getColumnName() + " = ?",
+                updateById(),
                 name, email, updatedTime, authorId
         );
     }
@@ -114,7 +111,7 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository {
     @Override
     public int deleteAuthor(Long authorId) {
         return jdbcTemplate.update(
-                "DELETE FROM author WHERE " + AUTHOR_ID.getColumnName() + " = ?",
+                deleteById(),
                 authorId
         );
     }

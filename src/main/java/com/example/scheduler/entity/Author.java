@@ -1,5 +1,7 @@
 package com.example.scheduler.entity;
 
+import com.example.scheduler.exception.CustomException;
+import com.example.scheduler.exception.exceptionCode.ExceptionCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -27,6 +29,19 @@ public class Author {
         this.email = author.email;
         this.createdDate = author.createdDate;
         this.updatedDate = author.updatedDate;
+    }
+
+    public void update(String name, String email, Timestamp updatedTime) {
+        this.name = name;
+        this.email = email;
+        this.updatedDate = updatedTime;
+    }
+
+
+    public void validateExistence() {
+        if (this.authorId == null) {
+            throw new CustomException(ExceptionCode.AUTHOR_NOT_FOUND);
+        }
     }
 
 }

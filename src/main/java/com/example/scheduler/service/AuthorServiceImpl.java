@@ -3,6 +3,8 @@ package com.example.scheduler.service;
 import com.example.scheduler.dto.AuthorRequestDto;
 import com.example.scheduler.dto.AuthorResponseDto;
 import com.example.scheduler.entity.Author;
+import com.example.scheduler.exception.CustomException;
+import com.example.scheduler.exception.exceptionCode.ExceptionCode;
 import com.example.scheduler.repository.AuthorRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,44 +30,34 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public Author findByAuthorId(Long authorId) {
         Author author = authorRepository.findAuthorByIdOrElseThrow(authorId);
-
         return new Author(author);
     }
 
 
     @Override
     public Author updateAuthor(Long authorId, String name, String email) {
-        //  현재 시간 설정
-        Timestamp updatedTime = new Timestamp(System.currentTimeMillis());
-
-        // 작성자가 존재하는지 확인
         Author author = authorRepository.findByAuthorId(authorId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 작성자입니다."));
+                .orElseThrow(() -> new CustomException(ExceptionCode.AUTHOR_NOT_FOUND));
 
-        // ️유효성 검사
-        if (name == null || name.trim().isEmpty() || email == null || email.trim().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이름과 이메일을 입력해주세요.");
-        }
+        author.update(name, email, new Timestamp(System.currentTimeMillis())); // ✅ 여기!
 
-        // 수정 수행
-        int updatedRow = authorRepository.updateAuthor(authorId, name, email, updatedTime);
+        int updatedRow = authorRepository.updateAuthor(authorId, author.getName(), author.getEmail(), author.getUpdatedDate());
         if (updatedRow == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "작성자 수정 실패");
+            throw new CustomException(ExceptionCode.AUTHOR_UPDATE_FAILED);
         }
 
-        // 5️수정된 작성자 정보 반환
         return authorRepository.findAuthorByIdOrElseThrow(authorId);
     }
+
 
 
     @Override
     public void deleteAuthor(Long authorId) {
         Author author = authorRepository.findByAuthorId(authorId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        int deleteRow = authorRepository.deleteAuthor(authorId);
-
-        if (deleteRow == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + authorId);
+        int deleted = authorRepository.deleteAuthor(authorId);
+        if (deleted == 0) {
+            throw new CustomException(ExceptionCode.AUTHOR_DELETE_FAILED);
         }
     }
 }

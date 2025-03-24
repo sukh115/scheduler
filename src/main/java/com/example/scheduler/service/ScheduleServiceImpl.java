@@ -3,12 +3,13 @@ package com.example.scheduler.service;
 import com.example.scheduler.dto.ScheduleAuthorDto;
 import com.example.scheduler.dto.ScheduleRequestDto;
 import com.example.scheduler.dto.ScheduleResponseDto;
+import com.example.scheduler.entity.Author;
 import com.example.scheduler.entity.Schedule;
+import com.example.scheduler.exception.CustomException;
+import com.example.scheduler.exception.exceptionCode.ExceptionCode;
 import com.example.scheduler.repository.AuthorRepository;
 import com.example.scheduler.repository.ScheduleRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -25,17 +26,16 @@ public class ScheduleServiceImpl implements ScheduleService {
         this.authorRepository = authorRepository;
     }
 
-
     @Override
     public ScheduleResponseDto saveSchedule(ScheduleRequestDto dto) {
-        if (!authorRepository.existsByAuthorId(dto.getAuthorId())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 작성자입니다.");
-        }
+        Author author = authorRepository.findByAuthorId(dto.getAuthorId())
+                .orElseThrow(() -> new CustomException(ExceptionCode.AUTHOR_NOT_FOUND));
+
+        author.validateExistence();
 
         Schedule schedule = new Schedule(dto.getTitle(), dto.getContent(), dto.getAuthorId(), dto.getPassword());
         return scheduleRepository.saveSchedule(schedule);
     }
-
 
     @Override
     public List<ScheduleAuthorDto> findAllSchedule() {
@@ -49,46 +49,33 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleAuthorDto updateSchedule(Long scheduleId, String title, String content, Long authorId, String password) {
-        //  현재 시간 설정
         Timestamp updatedTime = new Timestamp(System.currentTimeMillis());
 
-        // 일정이 존재하는지 확인
         Schedule schedule = scheduleRepository.findScheduleEntityById(scheduleId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 일정입니다."));
+                .orElseThrow(() -> new CustomException(ExceptionCode.SCHEDULE_NOT_FOUND));
 
-        // 작성자가 일치하는지 확인
-        if (!schedule.getAuthorId().equals(authorId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "작성자만 일정을 수정할 수 있습니다.");
-        }
+        schedule.validateAuthor(authorId);
+        schedule.validatePassword(password);
 
-        // 비밀번호 검증
-        if (!schedule.getPassword().equals(password)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
-        }
+        schedule.update(title, content, updatedTime);
 
-        // 수정 수행
         int updatedRow = scheduleRepository.updatedSchedule(scheduleId, title, content, updatedTime, authorId);
-
         if (updatedRow == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "일정 수정 실패");
+            throw new CustomException(ExceptionCode.SCHEDULE_UPDATE_FAILED);
         }
 
-        // 수정된 일정 반환 (작성자 이름 포함)
         return scheduleRepository.findScheduleByIdOrElseThrow(scheduleId);
     }
 
     @Override
     public void deleteSchedule(Long scheduleId, String password) {
-        Schedule schedule = scheduleRepository.findScheduleEntityById(scheduleId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Schedule schedule = scheduleRepository.findScheduleEntityById(scheduleId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.SCHEDULE_NOT_FOUND));
 
-        if (!schedule.getPassword().equals(password)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
-        }
-
-        int deleteRow = scheduleRepository.deleteSchedule(scheduleId);
-
-        if (deleteRow == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + scheduleId);
+        schedule.validatePassword(password);
+        int deletedRow = scheduleRepository.deleteSchedule(scheduleId);
+        if (deletedRow == 0) {
+            throw new CustomException(ExceptionCode.SCHEDULE_DELETE_FAILED);
         }
     }
 
@@ -97,6 +84,4 @@ public class ScheduleServiceImpl implements ScheduleService {
         int offset = page * size;
         return scheduleRepository.findAllPaged(offset, size);
     }
-
-
 }
