@@ -171,7 +171,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
                     rs.getString(TITLE.getColumnName()),
                     rs.getString(CONTENT.getColumnName()),
                     timestamp.toString(),
-                    rs.getString(AuthorColumns.NAME.getColumnName()) // 별칭으로 가져옴
+                    rs.getString("author_name")
             );
         };
     }

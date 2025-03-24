@@ -4,7 +4,7 @@ import static com.example.scheduler.constant.column.AuthorColumns.*;
 
 /**
  * 작성자(author) 관련 SQL 쿼리를 정의한 클래스
- * - JdbcTemplateAuthorRepository에서 사용
+ * - JdbcTemplateAuthorRepository 사용
  */
 public class AuthorQuery {
 

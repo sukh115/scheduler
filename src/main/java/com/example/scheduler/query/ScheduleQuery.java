@@ -16,7 +16,7 @@ public class ScheduleQuery {
         return "SELECT s." + TITLE.getColumnName() + ", " +
                 "s." + CONTENT.getColumnName() + ", " +
                 "s." + UPDATED_DATE.getColumnName() + ", " +
-                "a." + AuthorColumns.NAME.getColumnName() + " " +
+                "a." + AuthorColumns.NAME.getColumnName() + " AS author_name " +
                 "FROM schedule s " +
                 "JOIN author a ON s." + AUTHOR_ID.getColumnName() + " = a." + AUTHOR_ID.getColumnName() + " " +
                 "ORDER BY s." + UPDATED_DATE.getColumnName() + " DESC";
@@ -24,7 +24,14 @@ public class ScheduleQuery {
 
     // 특정 작성자의 일정만 조회
     public static String findByAuthorId() {
-        return findAllWithAuthor() + " WHERE s." + AUTHOR_ID.getColumnName() + " = ?";
+        return "SELECT s." + TITLE.getColumnName() + ", " +
+                "s." + CONTENT.getColumnName() + ", " +
+                "s." + UPDATED_DATE.getColumnName() + ", " +
+                "a." + AuthorColumns.NAME.getColumnName() + " AS author_name " +
+                "FROM schedule s " +
+                "JOIN author a ON s." + AUTHOR_ID.getColumnName() + " = a." + AUTHOR_ID.getColumnName() + " " +
+                "WHERE s." + AUTHOR_ID.getColumnName() + " = ? " +
+                "ORDER BY s." + UPDATED_DATE.getColumnName() + " DESC";
     }
 
     // 전체 일정 페이징 조회
@@ -39,7 +46,13 @@ public class ScheduleQuery {
 
     // 일정 ID 기준으로 작성자 포함 조회
     public static String findByIdWithAuthor() {
-        return findAllWithAuthor() + " WHERE s." + SCHEDULE_ID.getColumnName() + " = ?";
+        return "SELECT s." + TITLE.getColumnName() + ", " +
+                "s." + CONTENT.getColumnName() + ", " +
+                "s." + UPDATED_DATE.getColumnName() + ", " +
+                "a." + AuthorColumns.NAME.getColumnName() + " AS author_name " +
+                "FROM schedule s " +
+                "JOIN author a ON s." + AUTHOR_ID.getColumnName() + " = a." + AUTHOR_ID.getColumnName() + " " +
+                "WHERE s." + SCHEDULE_ID.getColumnName() + " = ?";
     }
 
     // 일정 수정
