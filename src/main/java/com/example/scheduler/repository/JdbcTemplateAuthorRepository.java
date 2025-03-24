@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static constant.column.AuthorColumns.*;
+
 @Repository
 public class JdbcTemplateAuthorRepository implements AuthorRepository {
 
@@ -25,17 +27,19 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-
+    /**
+     * 작성자 저장 - author 테이블에 데이터를 저장하고 ID 반환
+     */
     @Override
     public AuthorResponseDto saveAuthor(Author author) {
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
-        jdbcInsert.withTableName("author").usingGeneratedKeyColumns("author_id");
+        jdbcInsert.withTableName("author").usingGeneratedKeyColumns(AUTHOR_ID.getColumnName());
 
         Map<String, Object> parameter = new HashMap<>();
-        parameter.put("name", author.getName());
-        parameter.put("email", author.getEmail());
-        parameter.put("created_date", author.getCreatedDate());
-        parameter.put("updated_date", author.getUpdatedDate());
+        parameter.put(NAME.getColumnName(), author.getName());
+        parameter.put(EMAIL.getColumnName(), author.getEmail());
+        parameter.put(CREATED_DATE.getColumnName(), author.getCreatedDate());
+        parameter.put(UPDATED_DATE.getColumnName(), author.getUpdatedDate());
 
         Number key = jdbcInsert.executeAndReturnKey(parameter);
         Long generatedId = key.longValue();
@@ -48,62 +52,93 @@ public class JdbcTemplateAuthorRepository implements AuthorRepository {
         );
     }
 
+    /**
+     * 작성자 ID 존재 여부 확인
+     */
     @Override
     public boolean existsByAuthorId(Long authorId) {
-        String sql = "SELECT COUNT(*) FROM author WHERE author_id = ?";
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, authorId);
+        Integer count = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM author WHERE " + AUTHOR_ID.getColumnName() + " = ?",
+                Integer.class,
+                authorId
+        );
         return count != null && count > 0;
     }
 
+    /**
+     * 작성자 ID로 조회, 없으면 예외 발생
+     */
     @Override
     public Author findAuthorByIdOrElseThrow(Long authorId) {
-        List<Author> result = jdbcTemplate.query("SELECT * FROM author WHERE author_id = ?", authorRowMapper, authorId);
-
-        return result.stream().findAny().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + authorId));
+        List<Author> result = jdbcTemplate.query(
+                "SELECT * FROM author WHERE " + AUTHOR_ID.getColumnName() + " = ?",
+                authorRowMapper,
+                authorId
+        );
+        return result.stream().findAny().orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist id = " + authorId)
+        );
     }
 
-    @Override
-    public Optional<Author> findEntityByAuthorId(Long authorId) {
-        List<Author> result = jdbcTemplate.query("SELECT * FROM author WHERE author_id = ?", authorRowMapper, authorId);
-
-        return result.stream().findAny();
-    }
-
+    /**
+     * 작성자 ID로 Optional 형태 조회 (Entity)
+     */
     @Override
     public Optional<Author> findByAuthorId(Long authorId) {
-        List<Author> result = jdbcTemplate.query("SELECT * FROM author WHERE author_id = ?", authorRowMapper, authorId);
+        List<Author> result = jdbcTemplate.query(
+                "SELECT * FROM author WHERE " + AUTHOR_ID.getColumnName() + " = ?",
+                authorRowMapper,
+                authorId
+        );
         return result.stream().findAny();
     }
 
+    /**
+     * 작성자 정보 수정
+     */
     @Override
     public int updateAuthor(Long authorId, String name, String email, Timestamp updatedTime) {
         return jdbcTemplate.update(
-                "UPDATE author SET name = ?, email = ?, updated_date = ? WHERE author_id = ?",
+                "UPDATE author SET " +
+                        NAME.getColumnName() + " = ?, " +
+                        EMAIL.getColumnName() + " = ?, " +
+                        UPDATED_DATE.getColumnName() + " = ? " +
+                        "WHERE " + AUTHOR_ID.getColumnName() + " = ?",
                 name, email, updatedTime, authorId
         );
     }
 
+    /**
+     * 작성자 삭제
+     */
     @Override
     public int deleteAuthor(Long authorId) {
-        return jdbcTemplate.update("DELETE FROM author WHERE author_id = ?", authorId);
+        return jdbcTemplate.update(
+                "DELETE FROM author WHERE " + AUTHOR_ID.getColumnName() + " = ?",
+                authorId
+        );
     }
 
+    /**
+     * RowMapper: Author Entity 매핑
+     */
     private final RowMapper<Author> authorRowMapper = (rs, rowNum) ->
             new Author(
-                    rs.getLong("author_id"),
-                    rs.getString("name"),
-                    rs.getString("email"),
-                    rs.getTimestamp("created_date"),
-                    rs.getTimestamp("updated_date")
+                    rs.getLong(AUTHOR_ID.getColumnName()),
+                    rs.getString(NAME.getColumnName()),
+                    rs.getString(EMAIL.getColumnName()),
+                    rs.getTimestamp(CREATED_DATE.getColumnName()),
+                    rs.getTimestamp(UPDATED_DATE.getColumnName())
             );
 
+    /**
+     * RowMapper: Author DTO 매핑
+     */
     private final RowMapper<AuthorResponseDto> authorResponseDtoRowMapper = (rs, rowNum) ->
             new AuthorResponseDto(
-                    rs.getLong("author_id"),
-                    rs.getString("name"),
-                    rs.getString("email"),
-                    rs.getTimestamp("updated_date").toString()
+                    rs.getLong(AUTHOR_ID.getColumnName()),
+                    rs.getString(NAME.getColumnName()),
+                    rs.getString(EMAIL.getColumnName()),
+                    rs.getTimestamp(UPDATED_DATE.getColumnName()).toString()
             );
-
-
 }

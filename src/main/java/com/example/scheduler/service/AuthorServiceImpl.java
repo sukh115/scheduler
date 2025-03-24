@@ -39,7 +39,7 @@ public class AuthorServiceImpl implements AuthorService {
         Timestamp updatedTime = new Timestamp(System.currentTimeMillis());
 
         // 작성자가 존재하는지 확인
-        Author author = authorRepository.findEntityByAuthorId(authorId)
+        Author author = authorRepository.findByAuthorId(authorId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 작성자입니다."));
 
         // ️유효성 검사
@@ -60,7 +60,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public void deleteAuthor(Long authorId) {
-        Author author = authorRepository.findEntityByAuthorId(authorId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Author author = authorRepository.findByAuthorId(authorId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         int deleteRow = authorRepository.deleteAuthor(authorId);
 
