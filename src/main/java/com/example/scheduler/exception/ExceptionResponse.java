@@ -9,6 +9,7 @@ import lombok.Getter;
 public class ExceptionResponse {
 
     private int status;
+    private String code;
     private String message;
     private String timestamp;
 

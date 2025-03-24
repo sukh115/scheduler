@@ -66,13 +66,9 @@ public class ScheduleServiceImpl implements ScheduleService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
         }
 
-        // 제목과 내용이 비어 있으면 예외 발생
-        if (title == null || title.trim().isEmpty() || content == null || content.trim().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "제목과 내용을 입력해주세요.");
-        }
-
         // 수정 수행
         int updatedRow = scheduleRepository.updatedSchedule(scheduleId, title, content, updatedTime, authorId);
+
         if (updatedRow == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "일정 수정 실패");
         }
