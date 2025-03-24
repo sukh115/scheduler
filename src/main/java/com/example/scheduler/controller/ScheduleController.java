@@ -56,15 +56,15 @@ public class ScheduleController {
      * @return Optional로 감싼 일정 + 작성자 DTO
      */
     @GetMapping("/author/{authorId}")
-    public ResponseEntity<Optional<ScheduleAuthorDto>> findByAuthorId(@PathVariable Long authorId) {
-        return new ResponseEntity<>(scheduleService.findByAuthorId(authorId), HttpStatus.OK);
+    public ResponseEntity<List<ScheduleAuthorDto>> findByAuthorId(@PathVariable Long authorId) {
+        return new ResponseEntity<>(scheduleService.findAllByAuthorId(authorId), HttpStatus.OK);
     }
 
     /**
      * 일정을 수정합니다.
      *
      * @param scheduleId 수정할 일정 ID
-     * @param dto 일정 수정 요청 데이터 (제목, 내용, 작성자 ID, 비밀번호)
+     * @param dto        일정 수정 요청 데이터 (제목, 내용, 작성자 ID, 비밀번호)
      * @return 수정된 일정 + 작성자 DTO
      */
     @PutMapping("/{scheduleId}")
@@ -82,7 +82,7 @@ public class ScheduleController {
      * 일정을 삭제합니다.
      *
      * @param scheduleId 삭제할 일정 ID
-     * @param dto 일정 삭제 요청 데이터 (비밀번호)
+     * @param dto        일정 삭제 요청 데이터 (비밀번호)
      * @return HTTP 상태 코드 200 OK
      */
     @DeleteMapping("/{scheduleId}")

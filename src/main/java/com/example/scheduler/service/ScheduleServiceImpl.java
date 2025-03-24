@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 일정 관련 비즈니스 로직을 처리하는 서비스 구현 클래스
@@ -53,8 +52,8 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     // 작성자 ID로 최신 일정 1건 조회
     @Override
-    public Optional<ScheduleAuthorDto> findByAuthorId(Long authorId) {
-        return scheduleRepository.findByAuthorId(authorId);
+    public List<ScheduleAuthorDto> findAllByAuthorId(Long authorId) {
+        return scheduleRepository.findAllByAuthorId(authorId);
     }
 
     /**
@@ -79,7 +78,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         schedule.update(title, content, updatedTime);
 
         // DB에 반영
-        int updatedRow = scheduleRepository.updatedSchedule(scheduleId, title, content, updatedTime, authorId);
+        int updatedRow = scheduleRepository.updateSchedule(scheduleId, title, content, updatedTime, authorId);
         if (updatedRow == 0) {
             throw new CustomException(ExceptionCode.SCHEDULE_UPDATE_FAILED);
         }

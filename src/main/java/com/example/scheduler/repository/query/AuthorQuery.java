@@ -1,6 +1,6 @@
-package com.example.scheduler.query;
+package com.example.scheduler.repository.query;
 
-import static com.example.scheduler.constant.column.AuthorColumns.*;
+import static com.example.scheduler.repository.column.AuthorColumns.*;
 
 /**
  * 작성자(author) 관련 SQL 쿼리를 정의한 클래스

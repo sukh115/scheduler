@@ -1,8 +1,7 @@
-package com.example.scheduler.query;
+package com.example.scheduler.repository.query;
 
-import com.example.scheduler.constant.column.AuthorColumns;
-
-import static com.example.scheduler.constant.column.ScheduleColumns.*;
+import com.example.scheduler.repository.column.AuthorColumns;
+import static com.example.scheduler.repository.column.ScheduleColumns.*;
 
 /**
  * 일정(schedule) 관련 SQL 쿼리를 정의한 클래스

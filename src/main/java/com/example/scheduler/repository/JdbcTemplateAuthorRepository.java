@@ -16,8 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.example.scheduler.constant.column.AuthorColumns.*;
-import static com.example.scheduler.query.AuthorQuery.*;
+import static com.example.scheduler.repository.column.AuthorColumns.*;
+import static com.example.scheduler.repository.query.AuthorQuery.*;
+
 
 /**
  * 작성자 데이터를 JDBC 기반으로 관리하는 Repository 구현체

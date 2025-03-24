@@ -1,10 +1,9 @@
 package com.example.scheduler.repository;
 
-import com.example.scheduler.constant.column.AuthorColumns;
 import com.example.scheduler.dto.ScheduleAuthorDto;
 import com.example.scheduler.dto.ScheduleResponseDto;
 import com.example.scheduler.entity.Schedule;
-import com.example.scheduler.query.ScheduleQuery;
+import com.example.scheduler.repository.query.ScheduleQuery;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -19,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.example.scheduler.constant.column.ScheduleColumns.*;
-import static com.example.scheduler.query.ScheduleQuery.*;
+import static com.example.scheduler.repository.column.ScheduleColumns.*;
+import static com.example.scheduler.repository.query.ScheduleQuery.*;
 
 /**
  * 일정 데이터를 JDBC 기반으로 관리하는 Repository 구현체
@@ -97,13 +96,12 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
      * - 반환: DTO
      */
     @Override
-    public Optional<ScheduleAuthorDto> findByAuthorId(Long authorId) {
-        List<ScheduleAuthorDto> result = jdbcTemplate.query(
-                ScheduleQuery.findByAuthorId(),
+    public List<ScheduleAuthorDto> findAllByAuthorId(Long authorId) {
+        return jdbcTemplate.query(
+                findByAuthorId(),
                 scheduleAuthorRowMapper(),
                 authorId
         );
-        return result.stream().findAny();
     }
 
     /**
@@ -125,7 +123,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
      * - 조건: schedule_id
      */
     @Override
-    public int updatedSchedule(Long scheduleId, String title, String content, Timestamp updatedTime, Long authorId) {
+    public int updateSchedule(Long scheduleId, String title, String content, Timestamp updatedTime, Long authorId) {
         return jdbcTemplate.update(
                 updateById(),
                 title, content, updatedTime, scheduleId

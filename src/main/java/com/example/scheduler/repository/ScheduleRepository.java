@@ -21,13 +21,13 @@ public interface ScheduleRepository {
     Optional<Schedule> findScheduleEntityById(Long scheduleId);
 
     // 작성자 ID로 일정 1건 조회 (작성자 이름 포함)
-    Optional<ScheduleAuthorDto> findByAuthorId(Long authorId);
+    List<ScheduleAuthorDto> findAllByAuthorId(Long authorId);
 
     // 전체 일정 페이징 목록 조회 (작성자 포함)
     List<ScheduleAuthorDto> findAllPaged(int offset, int limit);
 
     // 일정 수정
-    int updatedSchedule(Long scheduleId, String title, String content, Timestamp updated_time, Long authorId);
+    int updateSchedule(Long scheduleId, String title, String content, Timestamp updated_time, Long authorId);
 
     // 일정 ID로 일정 조회 (작성자 포함) - 없으면 예외 발생
     ScheduleAuthorDto findScheduleByIdOrElseThrow(Long scheduleId);
