@@ -165,10 +165,11 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
     private RowMapper<ScheduleAuthorDto> scheduleAuthorRowMapper() {
         return (rs, rowNum) -> {
             Timestamp timestamp = rs.getTimestamp(UPDATED_DATE.getColumnName());
+            String formattedDate  = timestamp.toLocalDateTime().toLocalDate().toString();
             return new ScheduleAuthorDto(
                     rs.getString(TITLE.getColumnName()),
                     rs.getString(CONTENT.getColumnName()),
-                    timestamp.toString(),
+                    formattedDate,
                     rs.getString("author_name")
             );
         };
