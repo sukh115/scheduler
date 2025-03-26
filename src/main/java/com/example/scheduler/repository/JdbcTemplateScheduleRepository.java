@@ -123,7 +123,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
      * - 조건: schedule_id
      */
     @Override
-    public int updateSchedule(Long scheduleId, String title, String content, Timestamp updatedTime, Long authorId) {
+    public int updateSchedule(Long scheduleId, String title, String content, Timestamp updatedTime) {
         return jdbcTemplate.update(
                 updateById(),
                 title, content, updatedTime, scheduleId

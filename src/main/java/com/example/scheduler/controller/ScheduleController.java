@@ -108,6 +108,4 @@ public class ScheduleController {
     ) {
         return scheduleService.findAllSchedulePaged(page, size);
     }
-
-
 }

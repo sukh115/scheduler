@@ -27,7 +27,7 @@ public interface ScheduleRepository {
     List<ScheduleAuthorDto> findAllPaged(int offset, int limit);
 
     // 일정 수정
-    int updateSchedule(Long scheduleId, String title, String content, Timestamp updated_time, Long authorId);
+    int updateSchedule(Long scheduleId, String title, String content, Timestamp updated_time);
 
     // 일정 ID로 일정 조회 (작성자 포함) - 없으면 예외 발생
     ScheduleAuthorDto findScheduleByIdOrElseThrow(Long scheduleId);

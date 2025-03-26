@@ -22,5 +22,5 @@ public class ScheduleAuthorDto {
     private String updatedDate;
 
     // 작성자 이름
-    private String Name;
+    private String name;
 }

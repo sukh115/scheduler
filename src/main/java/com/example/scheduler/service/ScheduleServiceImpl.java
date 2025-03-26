@@ -78,7 +78,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         schedule.update(title, content, updatedTime);
 
         // DB에 반영
-        int updatedRow = scheduleRepository.updateSchedule(scheduleId, title, content, updatedTime, authorId);
+        int updatedRow = scheduleRepository.updateSchedule(scheduleId, title, content, updatedTime);
         if (updatedRow == 0) {
             throw new CustomException(ExceptionCode.SCHEDULE_UPDATE_FAILED);
         }
