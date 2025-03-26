@@ -50,7 +50,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return scheduleRepository.findAllSchedule();
     }
 
-    // 작성자 ID로 최신 일정 1건 조회
+    // 작성자 ID로 최신 일정 전체 조회
     @Override
     public List<ScheduleAuthorDto> findAllByAuthorId(Long authorId) {
         return scheduleRepository.findAllByAuthorId(authorId);

@@ -90,7 +90,7 @@ public class JdbcTemplateScheduleRepository implements ScheduleRepository {
     }
 
     /**
-     * 작성자 ID로 최신 일정 1건 조회
+     * 작성자 ID로 최신 일정 전체 조회
      * - 조건: author_id
      * - 정렬: updated_date DESC
      * - 반환: DTO

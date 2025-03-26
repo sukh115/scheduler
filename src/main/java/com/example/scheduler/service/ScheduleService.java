@@ -12,7 +12,7 @@ public interface ScheduleService {
 
     List<ScheduleAuthorDto> findAllSchedule();                          // 전체 일정 조회
 
-    List<ScheduleAuthorDto> findAllByAuthorId(Long authorId);          // 작성자 ID로 최신 일정 1건 조회
+    List<ScheduleAuthorDto> findAllByAuthorId(Long authorId);          // 작성자 ID로 최신 일정 전체 조회
 
     ScheduleAuthorDto updateSchedule(Long scheduleId, String title, String content, Long authorId, String password); // 일정 수정
 

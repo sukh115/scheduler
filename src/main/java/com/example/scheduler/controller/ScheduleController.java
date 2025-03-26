@@ -49,7 +49,7 @@ public class ScheduleController {
     }
 
     /**
-     * 작성자 ID로 가장 최신 일정 1건을 조회합니다.
+     * 작성자 ID로 가장 최신 일정 전체 조회합니다.
      *
      * @param authorId 작성자 ID
      * @return Optional로 감싼 일정 + 작성자 DTO

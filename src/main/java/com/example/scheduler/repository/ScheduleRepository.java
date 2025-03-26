@@ -20,7 +20,7 @@ public interface ScheduleRepository {
     // 일정 ID로 엔티티 조회
     Optional<Schedule> findScheduleEntityById(Long scheduleId);
 
-    // 작성자 ID로 일정 1건 조회 (작성자 이름 포함)
+    // 작성자 ID로 일정 전체 조회 (작성자 이름 포함)
     List<ScheduleAuthorDto> findAllByAuthorId(Long authorId);
 
     // 전체 일정 페이징 목록 조회 (작성자 포함)
